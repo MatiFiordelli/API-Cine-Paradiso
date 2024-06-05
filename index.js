@@ -3,9 +3,9 @@ import express from 'express'
 import { connectMongoDB } from './Connection/index.js'
 import { 
     welcome
-} from ".//Controllers/index.js"
+} from "./Controllers/index.js"
 
-await connectMongoDB()
+connectMongoDB()
 const app = express()
 const PORT = process.env.PORT || 3001
 
