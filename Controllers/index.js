@@ -52,7 +52,7 @@ const extractMovieBillboard = async (req, res) => {
     const insertRecord = async (data) => {
         let obj = {}
         let arr = []
-        data.forEach((e)=>{
+        data.forEach((e) => {
             obj = {
                 backdrop_path: e.backdrop_path,
                 genre_ids: e.genre_ids,
@@ -71,7 +71,7 @@ const extractMovieBillboard = async (req, res) => {
         })
 
         await MovieBillboard.deleteMany({})
-        const newMoviebillboard = new MovieBillboard({results: arr})
+        const newMoviebillboard = new MovieBillboard({ results: arr })
 
         try {
             await newMoviebillboard.save()
@@ -89,6 +89,32 @@ const getMovieBillboard = async (req, res) => {
     res.send(movieBillboard)
 }
 
+const getTrailers = async (req, res) => {
+    const apiKey = "4d1a073d6e646d93ce0400ffa3b8d13e"
+    const movieBillboard = await MovieBillboard.find({})
+    const moviesArray = movieBillboard[0].results
+    const movieTrailersJSONs = []
+    moviesArray.forEach((e) => {
+        movieTrailersJSONs.push(`https://api.themoviedb.org/3/movie/${e.id}/videos?language=es-ES&api_key=${apiKey}`)
+    })
+
+    const movieTrailersUrls = await Promise.all(
+        movieTrailersJSONs.map((e) =>
+            fetch(e)
+                .then((res) => res.json())
+                .then((data) => {
+                    const params = '?si=A6MpsJXJ7WJE401P?autoplay=1&mute=1&widgetid=1'
+
+                    if ((data?.results)?.length > 0) {
+                        const key = data.results[0].key
+                        return `https://www.youtube.com/embed/${key}${params}`
+                    }
+                })
+        )
+    )
+
+    res.json({ trailers: [...movieTrailersUrls] })
+}
 
 export {
     welcome,
@@ -97,5 +123,6 @@ export {
     getHours,
     extractMovieBillboard,
     getMovieBillboard,
-    postMessageContact
+    postMessageContact,
+    getTrailers
 }
