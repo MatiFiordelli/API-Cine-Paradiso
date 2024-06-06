@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
-import { userSchema } from '../Schemas/index.js'
+import { pricesSchema, messagesContactSchema } from '../Schemas/index.js'
 
-export const Users = mongoose.model('Users', userSchema)
+export const Prices = mongoose.model('Prices', pricesSchema)
+export const MessagesContact = mongoose.model('MessagesContact', messagesContactSchema)

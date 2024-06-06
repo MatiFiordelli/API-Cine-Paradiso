@@ -2,10 +2,14 @@ import cors from 'cors'
 import express from 'express'
 import { connectMongoDB } from './Connection/index.js'
 import { 
-    welcome
+    welcome,
+    template,
+    getPrices,
+    extractMovieBillboard,
+    postMessageContact
 } from "./Controllers/index.js"
 
-connectMongoDB()
+await connectMongoDB()
 const app = express()
 const PORT = process.env.PORT || 3001
 
@@ -13,7 +17,17 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.get('/', (req, res)=> welcome(req, res))
+
+
+
+app.get('/', (req, res) => welcome(req, res))
+app.post('/post-message-contact', (req, res) => template(req, res, postMessageContact))
+app.get('/get-prices', (req, res) => template(req, res, getPrices))
+app.get('/extract-movie-billboard', (req, res) => template(req, res, extractMovieBillboard))
+
+
+
+
 
 app.options('/', (req, res)=>{
     res.setHeader('Access-Control-Allow-Origin', '*')
