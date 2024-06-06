@@ -28,7 +28,7 @@ export const movieBillboardObjSchema = new mongoose.Schema({
     poster_path: String,
     release_date: String,
     title: String,
-    vote_average: Decimal128,
+    vote_average: Number,
     vote_count: Number
 })
 
