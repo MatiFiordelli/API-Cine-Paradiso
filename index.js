@@ -7,6 +7,7 @@ import {
     getPrices,
     getHours,
     extractMovieBillboard,
+    getMovieBillboard,
     postMessageContact
 } from "./Controllers/index.js"
 
@@ -26,7 +27,7 @@ app.post('/post-message-contact', (req, res) => template(req, res, postMessageCo
 app.get('/get-prices', (req, res) => template(req, res, getPrices))
 app.get('/get-hours', (req, res) => template(req, res, getHours))
 app.get('/extract-movie-billboard', (req, res) => template(req, res, extractMovieBillboard))
-//app.get('/get-movie-billboard', (req, res) => template(req, res, getMovieBillboard))
+app.get('/get-movie-billboard', (req, res) => template(req, res, getMovieBillboard))
 
 
 

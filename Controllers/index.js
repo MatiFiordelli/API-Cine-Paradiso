@@ -84,6 +84,11 @@ const extractMovieBillboard = async (req, res) => {
 
 }
 
+const getMovieBillboard = async (req, res) => {
+    const movieBillboard = await MovieBillboard.find({})
+    res.send(movieBillboard)
+}
+
 
 export {
     welcome,
@@ -91,5 +96,6 @@ export {
     getPrices,
     getHours,
     extractMovieBillboard,
+    getMovieBillboard,
     postMessageContact
 }
