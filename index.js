@@ -5,6 +5,7 @@ import {
     welcome,
     template,
     getPrices,
+    getHours,
     extractMovieBillboard,
     postMessageContact
 } from "./Controllers/index.js"
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true }))
 app.get('/', (req, res) => welcome(req, res))
 app.post('/post-message-contact', (req, res) => template(req, res, postMessageContact))
 app.get('/get-prices', (req, res) => template(req, res, getPrices))
+app.get('/get-hours', (req, res) => template(req, res, getHours))
 app.get('/extract-movie-billboard', (req, res) => template(req, res, extractMovieBillboard))
 
 

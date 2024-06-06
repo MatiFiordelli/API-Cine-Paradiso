@@ -5,6 +5,11 @@ export const pricesSchema = new mongoose.Schema({
     price: String
 })
 
+export const hoursSchema = new mongoose.Schema({
+    afternoon: [String],
+    evening: [String],
+})
+
 export const messagesContactSchema = new mongoose.Schema({
     name: String,
     email: String,

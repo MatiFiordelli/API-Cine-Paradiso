@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { Prices, MessagesContact } from '../Models/index.js'
+import { Prices, Hours, MessagesContact } from '../Models/index.js'
 import fetch from 'node-fetch'
 
 const welcome = (req, res)=> {
@@ -32,6 +32,11 @@ const getPrices = async(req, res) => {
     res.send(prices)
 }
 
+const getHours = async(req, res) => {
+    const hours = await Hours.find({})
+    res.send(hours)
+}
+
 const extractMovieBillboard = async(req, res) => {
     const endPointBg = "https://api.themoviedb.org/3"
     const apiKey = "4d1a073d6e646d93ce0400ffa3b8d13e"
@@ -48,6 +53,7 @@ export {
     welcome,
     template,
     getPrices,
+    getHours,
     extractMovieBillboard,
     postMessageContact
 }
