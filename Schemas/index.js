@@ -35,3 +35,16 @@ export const movieBillboardObjSchema = new mongoose.Schema({
 export const movieBillboardSchema = new mongoose.Schema({
     results: [movieBillboardObjSchema]
 })
+
+
+export const schedulesObjSchema = new mongoose.Schema({
+    hour: String,
+    seats: [Boolean]
+})
+export const seatsdateshoursObjSchema = new mongoose.Schema({
+    date: String,
+    schedules: [schedulesObjSchema]
+})
+export const seatsdateshoursSchema = new mongoose.Schema({
+    seatsdateshours: [seatsdateshoursObjSchema]
+})

@@ -1,5 +1,6 @@
 import 'dotenv/config'
-import { Prices, Hours, MessagesContact, MovieBillboard } from '../Models/index.js'
+import { Prices, Hours, MessagesContact, MovieBillboard, Seatsdateshours } from '../Models/index.js'
+import { getDateData, extractHours } from '../helpers/index.js'
 import fetch from 'node-fetch'
 
 const welcome = (req, res) => {
@@ -116,6 +117,45 @@ const getTrailers = async (req, res) => {
     res.json({ trailers: [...movieTrailersUrls] })
 }
 
+const initTableSeatsdateshours = async(req, res) => {
+    const theaters = (new Array(185)).fill(false)
+    const hoursFetched = await Hours.find({})
+    const hoursArray = extractHours(hoursFetched)
+    const datesArray = []
+    for(let i=0; i<7; i++){
+        datesArray.push(getDateData(i))
+    }
+
+    const seatsdateshoursObj = datesArray.map((e)=>{
+        const obj = {
+            date: `${e.dayNumber}/${e.monthNumber}`,
+            schedules: hoursArray.map((e)=>{
+                return {
+                    hour: e,
+                    seats: theaters
+                }
+            })
+        }
+
+        return obj
+    })
+
+    const seatsdateshours = new Seatsdateshours({seatsdateshours: seatsdateshoursObj})
+
+    try {
+        await seatsdateshours.save()
+        console.log('Successfully inserted')
+        res.sendStatus(200)
+    } catch (e) {
+        console.log('An error occurred while inserting into the Database: ' + e)
+    }
+}
+
+const getSeatsdateshours = async(req, res) => {
+    const seatsdateshours = await Seatsdateshours.find({})
+    res.send(seatsdateshours)
+}
+
 export {
     welcome,
     template,
@@ -124,5 +164,7 @@ export {
     extractMovieBillboard,
     getMovieBillboard,
     postMessageContact,
-    getTrailers
+    getTrailers,
+    initTableSeatsdateshours,
+    getSeatsdateshours
 }

@@ -9,7 +9,9 @@ import {
     extractMovieBillboard,
     getMovieBillboard,
     postMessageContact,
-    getTrailers
+    getTrailers,
+    initTableSeatsdateshours,
+    getSeatsdateshours
 } from "./Controllers/index.js"
 
 await connectMongoDB()
@@ -30,6 +32,8 @@ app.get('/get-hours', (req, res) => template(req, res, getHours))
 app.get('/extract-movie-billboard', (req, res) => template(req, res, extractMovieBillboard))
 app.get('/get-movie-billboard', (req, res) => template(req, res, getMovieBillboard))
 app.get('/get-trailers', (req, res) => template(req, res, getTrailers))
+app.get('/init-table-seatsdateshours', (req, res) => template(req, res, initTableSeatsdateshours))
+app.get('/get-seatsdateshours', (req, res) => template(req, res, getSeatsdateshours))
 
 //hacer la de los trailers
 
