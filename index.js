@@ -11,7 +11,8 @@ import {
     postMessageContact,
     getTrailers,
     initTableSeatsdateshours,
-    getSeatsdateshours
+    getSeatsdateshours,
+    updateSeatsdateshours
 } from "./Controllers/index.js"
 
 await connectMongoDB()
@@ -34,10 +35,9 @@ app.get('/get-movie-billboard', (req, res) => template(req, res, getMovieBillboa
 app.get('/get-trailers', (req, res) => template(req, res, getTrailers))
 app.get('/init-table-seatsdateshours', (req, res) => template(req, res, initTableSeatsdateshours))
 app.get('/get-seatsdateshours', (req, res) => template(req, res, getSeatsdateshours))
+app.post('/update-seatsdateshours', (req, res) => template(req, res, updateSeatsdateshours))
 
-//hacer la de los trailers
-
-
+//crear uno q borre dias pasados y complete a 7 dias los q falten, cada vez q se llame al endpoint
 
 app.options('/', (req, res)=>{
     res.setHeader('Access-Control-Allow-Origin', '*')
