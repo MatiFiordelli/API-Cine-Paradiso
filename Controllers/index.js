@@ -221,10 +221,11 @@ const callInitTableSeatsdatehours = (req,res) => {
 const renewAndRemoveOldRecordsTableSeatsdateshours = async (req, res) => {
     //obtengo tabla 
     const seatsdateshours = await Seatsdateshours.find({})
-console.log(seatsdateshours)
+
     //si esta vacia, la inicializa
     if(seatsdateshours.length === 0){
-        callInitTableSeatsdatehours(req, res)    
+        callInitTableSeatsdatehours(req, res)  
+        console.log(seatsdateshours)  
         console.log('Init by seatsdateshours.length === 0')    
         return
     }else{
@@ -258,9 +259,11 @@ console.log(seatsdateshours)
             }
         }
         //borro registros obsoletos
-        const filteredRecordsByDate = seatsdateshoursCopy.filter((e)=>{
-            return deleteObsoleteRecords(e)
-        })
+        const filteredRecordsByDate = await Promise.all(
+            seatsdateshoursCopy.filter((e)=>{
+                return deleteObsoleteRecords(e)
+            })
+        )
 
         //si no hay nada para modificar
         if(filteredRecordsByDate.length===7) {
@@ -271,7 +274,8 @@ console.log(seatsdateshours)
         if(filteredRecordsByDate.length===0) {
             callInitTableSeatsdatehours(req, res)
             console.log('Init by filteredRecordsByDate.length===0')
-            console.log(filteredRecordsByDate.length)
+            console.log('el len es: ',filteredRecordsByDate.length)
+            console.log('obj: ', filteredRecordsByDate)
             return
         }else{
 
