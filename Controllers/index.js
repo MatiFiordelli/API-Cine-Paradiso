@@ -224,7 +224,8 @@ const renewAndRemoveOldRecordsTableSeatsdateshours = async (req, res) => {
 
     //si esta vacia, la inicializa
     if(seatsdateshours.length === 0){
-        callInitTableSeatsdatehours(req, res)        
+        callInitTableSeatsdatehours(req, res)    
+        console.log('Init by seatsdateshours.length === 0')    
         return
     }else{
     
@@ -269,6 +270,7 @@ const renewAndRemoveOldRecordsTableSeatsdateshours = async (req, res) => {
         //si todas las fechas estan obsoletas, inicializa
         if(filteredRecordsByDate.length===0) {
             callInitTableSeatsdatehours(req, res)
+            console.log('Init by filteredRecordsByDate.length===0')
             return
         }else{
 
