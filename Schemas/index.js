@@ -1,4 +1,3 @@
-import { Decimal128 } from 'mongodb'
 import mongoose from 'mongoose'
 
 export const pricesSchema = new mongoose.Schema({
@@ -39,7 +38,7 @@ export const movieBillboardSchema = new mongoose.Schema({
 
 export const schedulesObjSchema = new mongoose.Schema({
     hour: String,
-    seats: [Boolean]
+    seats: [Boolean],
 })
 export const seatsdateshoursObjSchema = new mongoose.Schema({
     date: String,

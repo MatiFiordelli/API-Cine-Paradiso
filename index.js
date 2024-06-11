@@ -11,6 +11,7 @@ import {
     postMessageContact,
     getTrailers,
     initTableSeatsdateshours,
+    renewAndRemoveOldRecordsTableSeatsdateshours,
     getSeatsdateshours,
     updateSeatsdateshours
 } from "./Controllers/index.js"
@@ -24,8 +25,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 
-
-
 app.get('/', (req, res) => welcome(req, res))
 app.post('/post-message-contact', (req, res) => template(req, res, postMessageContact))
 app.get('/get-prices', (req, res) => template(req, res, getPrices))
@@ -34,10 +33,9 @@ app.get('/extract-movie-billboard', (req, res) => template(req, res, extractMovi
 app.get('/get-movie-billboard', (req, res) => template(req, res, getMovieBillboard))
 app.get('/get-trailers', (req, res) => template(req, res, getTrailers))
 app.get('/init-table-seatsdateshours', (req, res) => template(req, res, initTableSeatsdateshours))
+app.get('/renew-and-remove-old-records-table-seatsdateshours', (req, res) => template(req, res, renewAndRemoveOldRecordsTableSeatsdateshours))
 app.get('/get-seatsdateshours', (req, res) => template(req, res, getSeatsdateshours))
 app.post('/update-seatsdateshours', (req, res) => template(req, res, updateSeatsdateshours))
-
-//crear uno q borre dias pasados y complete a 7 dias los q falten, cada vez q se llame al endpoint
 
 app.options('/', (req, res)=>{
     res.setHeader('Access-Control-Allow-Origin', '*')
