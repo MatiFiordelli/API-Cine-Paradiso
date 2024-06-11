@@ -1,5 +1,10 @@
 export const getDateData = (amountDays) => {
-    const todayLocale = new Date().toLocaleDateString().split('/')
+    const todayLocale = new Date().toLocaleDateString("es-AR", {
+        day: "numeric",
+        month: "numeric",
+        year: "numeric",
+    }).split('/')
+    
     const dayLocale=todayLocale[0]*1
     const monthLocale=(todayLocale[1]*1)-1
     const yearLocale=todayLocale[2]*1
@@ -11,7 +16,7 @@ export const getDateData = (amountDays) => {
         month: "long",
         day: "numeric",
     });
-    console.log(today)
+    
     const monthNumber = new Date(oneDay).toLocaleDateString("es-AR", {
         month: "numeric",
     });
@@ -21,6 +26,7 @@ export const getDateData = (amountDays) => {
     const dayName = splittedDate[0];
     const dayNumber = splittedDate[1].split(" de ")[0];
     const month = splittedDate[1].split(" de ")[1];
+
     return {
         dayName: dayName,
         dayNumber: dayNumber,
