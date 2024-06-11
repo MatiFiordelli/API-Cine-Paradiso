@@ -140,6 +140,7 @@ const initTableSeatsdateshours = async (req, res) => {
         return obj
     })
 
+    await Seatsdateshours.deleteMany({})
     const seatsdateshours = new Seatsdateshours({ seatsdateshours: seatsdateshoursObj })
 
     try {
@@ -208,106 +209,139 @@ const updateSeatsdateshours = async (req, res) => {
     }    
 }
 
+const callInitTableSeatsdatehours = (req,res) => {
+    fetch('https://api-cine-paradiso.vercel.app/init-table-seatsdateshours')
+        .then(()=>res.sendStatus(200))
+        .catch((err)=>{
+            console.log(err)
+            res.sendStatus(500)
+        })
+}
+
 const renewAndRemoveOldRecordsTableSeatsdateshours = async (req, res) => {
-    const today = new Date().toLocaleDateString().split('/')
-    const currentDay = today[0]
-    const currentMonth = today[1]
-
-    //devuelve un objeto con dia, mes y año, a partir de un string del formato: '12/2', dia/mes
-    const obtainDayAndMonth = (str) => {
-        const splitted = str.split('/')
-        
-        return {
-            day: splitted[0],
-            month: splitted[1],
-            year: new Date().getFullYear()
-        }
-    }
-
-    const deleteObsoleteRecords = (e) => {
-        const date = obtainDayAndMonth(e.date)
-        
-        if(date.month*1>currentMonth*1) return e
-        if(date.month*1===currentMonth*1){
-            if(date.day*1>=currentDay*1) {
-                return e
-            }
-        }
-    }
-
-    const getNextDay = (date, amountDays) => {
-        const result = new Date(date.setDate(date.getDate() + amountDays)).toLocaleDateString()
-        return result.slice(0,-5)
-    }
-
     //obtengo tabla 
     const seatsdateshours = await Seatsdateshours.find({})
-    const seatsdateshoursStringify = JSON.stringify(seatsdateshours)
-    const seatsdateshoursCopy = JSON.parse(seatsdateshoursStringify)[0].seatsdateshours
 
-    //borro registros obsoletos
-    const filteredRecordsByDate = seatsdateshoursCopy.filter((e)=>{
-        return deleteObsoleteRecords(e)
-    })
-
-    //detecto cantidad de registros a insertar, en total deben ser 7
-    const amountRecordsLeft = filteredRecordsByDate.length
-    const amountRecordsToInsert = 7 - amountRecordsLeft 
-    
-    //obtengo la fecha del ultimo registro disponible, null si no quedo ninguno
-    let lastRecordDate = null
-    if(amountRecordsToInsert > 0){
-        const lastIndex = filteredRecordsByDate.length - 1
-        lastRecordDate = filteredRecordsByDate[lastIndex].date
-    }
-
-    //function genera array de fechas a partir de una fecha, ejemplo: 13/6
-    const generateDatesArray = (strDate, amount) => {
-        const todayStr = `${today[0]}/${today[1]}`
-        const objDate = obtainDayAndMonth(strDate===null ? todayStr : strDate)
-        const fromThisDateOnAhead = new Date(objDate.year, objDate.month * 1, objDate.day * 1)
-        const array = []
+    if(seatsdateshours.length === 0){
+        callInitTableSeatsdatehours(req, res)
         
-        for(let i=0; i<amount; i++){
-            array.push(getNextDay(fromThisDateOnAhead ,1))
-        }
-        return array
-    }
+        return
+    }else{
+    
+        const seatsdateshoursStringify = JSON.stringify(seatsdateshours)
+        const seatsdateshoursCopy = JSON.parse(seatsdateshoursStringify)[0].seatsdateshours
 
-    //funcion para crear registro
-    const createRecords = async() => {
-        const theaters = (new Array(185)).fill(false)
-        const hoursFetched = await Hours.find({})
-        const hoursArray = extractHours(hoursFetched)
-        const datesArray = generateDatesArray(lastRecordDate , amountRecordsToInsert)
+        const today = new Date().toLocaleDateString().split('/')
+        const currentDay = today[0]
+        const currentMonth = today[1]
 
-        return datesArray.map((e) => {
+        //devuelve un objeto con dia, mes y año, a partir de un string del formato: '12/2', dia/mes
+        const obtainDayAndMonth = (str) => {
+            const splitted = str.split('/')
+            
             return {
-                date: e,
-                schedules: hoursArray.map((e) => {
-                    return {
-                        hour: e,
-                        seats: theaters
-                    }
-                })
+                day: splitted[0],
+                month: splitted[1],
+                year: new Date().getFullYear()
             }
+        }
+
+        const deleteObsoleteRecords = (e) => {
+            const date = obtainDayAndMonth(e.date)
+            
+            if(date.month*1>currentMonth*1) return e
+            if(date.month*1===currentMonth*1){
+                if(date.day*1>=currentDay*1) {
+                    return e
+                }
+            }
+        }
+        //borro registros obsoletos
+        const filteredRecordsByDate = seatsdateshoursCopy.filter((e)=>{
+            return deleteObsoleteRecords(e)
         })
-    }
-    
-    filteredRecordsByDate.push(...await createRecords())
-    //res.send(await filteredRecordsByDate)
-    seatsdateshours[0].seatsdateshours = await filteredRecordsByDate
-    res.send(seatsdateshours)
+
+        const getNextDay = (date, amountDays) => {
+            const result = new Date(date.setDate(date.getDate() + amountDays)).toLocaleDateString()
+            return result.slice(0,-5)
+        }
+
+        if(filteredRecordsByDate.length===0) {
+            callInitTableSeatsdatehours(req, res)
+            return
+        }
+        //detecto cantidad de registros a insertar, en total deben ser 7
+        const amountRecordsLeft = filteredRecordsByDate.length
+        const amountRecordsToInsert = 7 - amountRecordsLeft 
         
-    /*
-        TAREAS:
-        1- OBTENER EL JSON(TABLA)
-        2- RECORRERLO E IR BORRANDO LOS REGISTROS OBSOLETOS DE ACUERDO A LA FECHA
-        2a-HACER FUNCION PARA DETECCION DE FECHAS
-        3- CONTAR CUANTOS REGISTROS RESTAN
-        4- EN CASO DE QUEDAR ALGUN/OS REGISTROS, VER LA FECHA DEL ULTIMO
-        5- AGREGAR TANTOS REGISTROS, AL FINAL, HASTA COMPLETAR 7, TENIENDO EN CUENTA CORRELATIVIDAD DE FECHAS
-    */
+        //obtengo la fecha del ultimo registro disponible, null si no quedo ninguno
+        let lastRecordDate = null
+        if(amountRecordsToInsert > 0){
+            const lastIndex = filteredRecordsByDate.length - 1
+            lastRecordDate = filteredRecordsByDate[lastIndex].date
+        }
+
+        //function genera array de fechas a partir de una fecha, ejemplo: 13/6
+        const generateDatesArray = (strDate, amount) => {
+            const todayStr = `${today[0]}/${today[1]}`
+            const objDate = obtainDayAndMonth(strDate===null ? todayStr : strDate)
+            const fromThisDateOnAhead = new Date(objDate.year, objDate.month * 1, objDate.day * 1)
+            const array = []
+            
+            for(let i=0; i<amount; i++){
+                array.push(getNextDay(fromThisDateOnAhead ,1))
+            }
+            return array
+        }
+
+        //funcion para crear registro
+        const createRecords = async() => {
+            const theaters = (new Array(185)).fill(false)
+            const hoursFetched = await Hours.find({})
+            const hoursArray = extractHours(hoursFetched)
+            const datesArray = generateDatesArray(lastRecordDate , amountRecordsToInsert)
+
+            const obj = datesArray.map((e) => {
+                return {
+                    date: e,
+                    schedules: hoursArray.map((e) => {
+                        return {
+                            hour: e,
+                            seats: theaters
+                        }
+                    })
+                }
+            })
+            
+            return obj
+        }
+        
+        const result = await createRecords()
+        filteredRecordsByDate.push(result[0])
+        seatsdateshours[0].seatsdateshours = await filteredRecordsByDate
+
+        await Seatsdateshours.deleteMany({})
+        const seatdateshoursUpdated = new Seatsdateshours({ seatsdateshours: await filteredRecordsByDate })
+
+        try {
+            await seatdateshoursUpdated.save()
+            console.log('Successfully inserted')
+            res.sendStatus(200)
+        } catch (e) {
+            console.log('An error occurred while inserting into the Database: ' + e)
+            res.sendStatus(500)
+        }
+            
+        /*
+            TAREAS:
+            1- OBTENER EL JSON(TABLA)
+            2- RECORRERLO E IR BORRANDO LOS REGISTROS OBSOLETOS DE ACUERDO A LA FECHA
+            2a-HACER FUNCION PARA DETECCION DE FECHAS
+            3- CONTAR CUANTOS REGISTROS RESTAN
+            4- EN CASO DE QUEDAR ALGUN/OS REGISTROS, VER LA FECHA DEL ULTIMO
+            5- AGREGAR TANTOS REGISTROS, AL FINAL, HASTA COMPLETAR 7, TENIENDO EN CUENTA CORRELATIVIDAD DE FECHAS
+        */
+    }
 }
 
 export {
