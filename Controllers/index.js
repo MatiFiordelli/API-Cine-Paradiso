@@ -221,7 +221,7 @@ const callInitTableSeatsdatehours = (req,res) => {
 const renewAndRemoveOldRecordsTableSeatsdateshours = async (req, res) => {
     //obtengo tabla 
     const seatsdateshours = await Seatsdateshours.find({})
-
+console.log(seatsdateshours)
     //si esta vacia, la inicializa
     if(seatsdateshours.length === 0){
         callInitTableSeatsdatehours(req, res)    
@@ -271,6 +271,7 @@ const renewAndRemoveOldRecordsTableSeatsdateshours = async (req, res) => {
         if(filteredRecordsByDate.length===0) {
             callInitTableSeatsdatehours(req, res)
             console.log('Init by filteredRecordsByDate.length===0')
+            console.log(filteredRecordsByDate.length)
             return
         }else{
 
