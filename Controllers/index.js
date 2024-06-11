@@ -248,7 +248,7 @@ const renewAndRemoveOldRecordsTableSeatsdateshours = async (req, res) => {
             }
         }
 
-        const deleteObsoleteRecords = (e) => {
+        const deleteObsoleteRecords = async(e) => {
             const date = obtainDayAndMonth(e.date)
             
             if(date.month*1>currentMonth*1) return e
@@ -260,8 +260,8 @@ const renewAndRemoveOldRecordsTableSeatsdateshours = async (req, res) => {
         }
         //borro registros obsoletos
         const filteredRecordsByDate = Promise.all(
-            seatsdateshoursCopy.filter((e)=>{
-                return deleteObsoleteRecords(e)
+            seatsdateshoursCopy.filter(async(e)=>{
+                return await deleteObsoleteRecords(e)
             })
         )
         filteredRecordsByDate.then(async()=>{
