@@ -261,14 +261,14 @@ const updateSeatsdateshours = async (req, res) => {
 const updateSeatsdateshourstheaters = async (req, res) => {
     //obtengo tabla 
     const seatsdateshourstheaters = await Seatsdateshourstheaters.find({})
-    res.send(seatsdateshourstheaters)
+    const selectedMovie = seatsdateshourstheaters[0].results.filter((e)=>e.teather_movie_id===req.body.id)[0]
 
     //obtengo registro e indice en base a fecha
     const date = req.body.date
-    const records = seatsdateshourstheaters[0].seatsdateshours.filter((e) => {
+    const records = selectedMovie.seatsdateshours.filter((e) => {
         return e.date === date
     })
-    const index = seatsdateshourstheaters[0].seatsdateshours.findIndex((i) => i.date === date)
+    const index = selectedMovie.seatsdateshours.findIndex((i) => i.date === date)
 
     //obtengo campo hora que contiene el array de asientos, con el indice
     const hour = req.body.hour
@@ -290,15 +290,18 @@ const updateSeatsdateshourstheaters = async (req, res) => {
     records[0].schedules[finalIndex].seats = db_seats
 
     //record[0] registro a ser updated, aqui actualiza el registro del json que viene de la DB
-    seatsdateshourstheaters[0].seatsdateshours[index] = records[0]
+    selectedMovie.seatsdateshours[index] = records[0]
+
+    //aca actualiza el json inicial traido de la DB, y le reemplaza los datos, actualizados
+    seatsdateshourstheaters[0].results[req.body.id] = selectedMovie
 
     //update table
-    //try{
-        //await Seatsdateshours.deleteMany({}) 
-        //corregit siguiente
-        //const newSeatsdateshourstheaters = new Seatsdateshourstheaters({ seatsdateshours: seatsdateshours[0].seatsdateshours})
+    try{
+        await Seatsdateshourstheaters.deleteMany({}) 
+        
+        const newSeatsdateshourstheaters = new Seatsdateshourstheaters({ results: seatsdateshourstheaters[0].results})
 
-        /* try {
+        try {
             await newSeatsdateshourstheaters.save()
             console.log('Successfully inserted')
             res.sendStatus(200)
@@ -309,7 +312,7 @@ const updateSeatsdateshourstheaters = async (req, res) => {
     } catch(e){
         console.log('An error occurred while deleting into the Database: ' + e)
         res.sendStatus(500)
-    }    */ 
+    }    
 }
 
 const callInitTableSeatsdatehours = (req,res) => {
