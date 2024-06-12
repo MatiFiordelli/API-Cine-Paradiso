@@ -11,7 +11,9 @@ import {
     postMessageContact,
     getTrailers,
     initTableSeatsdateshours,
+    initTableSeatsdateshourstheaters,
     renewAndRemoveOldRecordsTableSeatsdateshours,
+    renewAndRemoveOldRecordsTableSeatsdateshourstheaters,
     getSeatsdateshours,
     updateSeatsdateshours
 } from "./Controllers/index.js"
@@ -33,7 +35,9 @@ app.get('/extract-movie-billboard', (req, res) => template(req, res, extractMovi
 app.get('/get-movie-billboard', (req, res) => template(req, res, getMovieBillboard))
 app.get('/get-trailers', (req, res) => template(req, res, getTrailers))
 app.get('/init-table-seatsdateshours', (req, res) => template(req, res, initTableSeatsdateshours))
+app.get('/init-table-seatsdateshourstheaters', (req, res) => template(req, res, initTableSeatsdateshourstheaters))
 app.get('/renew-and-remove-old-records-table-seatsdateshours', (req, res) => template(req, res, renewAndRemoveOldRecordsTableSeatsdateshours))
+app.get('/renew-and-remove-old-records-table-seatsdateshourstheaters', (req, res) => template(req, res, renewAndRemoveOldRecordsTableSeatsdateshourstheaters))
 app.get('/get-seatsdateshours', (req, res) => template(req, res, getSeatsdateshours))
 app.post('/update-seatsdateshours', (req, res) => template(req, res, updateSeatsdateshours))
 

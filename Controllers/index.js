@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { Prices, Hours, MessagesContact, MovieBillboard, Seatsdateshours } from '../Models/index.js'
+import { Prices, Hours, MessagesContact, MovieBillboard, Seatsdateshours, Seatsdateshourstheaters } from '../Models/index.js'
 import { getDateData, extractHours } from '../helpers/index.js'
 import fetch from 'node-fetch'
 
@@ -53,7 +53,7 @@ const extractMovieBillboard = async (req, res) => {
     const insertRecord = async (data) => {
         let obj = {}
         let arr = []
-        data.forEach((e) => {
+        data.forEach((e,i) => {
             obj = {
                 backdrop_path: e.backdrop_path,
                 genre_ids: e.genre_ids,
@@ -68,9 +68,9 @@ const extractMovieBillboard = async (req, res) => {
                 vote_average: e.vote_average,
                 vote_count: e.vote_count
             }
-            arr.push(obj)
+            if (i<20) arr.push(obj)
         })
-
+        console.log(arr)
         await MovieBillboard.deleteMany({})
         const newMoviebillboard = new MovieBillboard({ results: arr })
 
@@ -149,6 +149,50 @@ const initTableSeatsdateshours = async (req, res) => {
         res.sendStatus(200)
     } catch (e) {
         console.log('An error occurred while inserting into the Database: ' + e)
+    }
+}
+
+const initTableSeatsdateshourstheaters = async (req, res) => {
+    const theaters_movie_ids = []
+    for(let i=0; i<20; i++){ theaters_movie_ids.push(i)}
+    const seats = (new Array(185)).fill(false)
+    const hoursFetched = await Hours.find({})
+    const hoursArray = extractHours(hoursFetched)
+    const datesArray = []
+    for (let i = 0; i < 7; i++) {
+        datesArray.push(getDateData(i))
+    }
+
+    const seatsdateshourstheatersObj = theaters_movie_ids.map((e, i) => {
+        const obj = {
+            teather_movie_id: `${i}`,
+            seatsdateshours: datesArray.map((e)=>{
+                return {
+                    date: `${e.dayNumber}/${e.monthNumber}`,
+                    schedules: hoursArray.map((e) => {
+                        return {
+                            hour: e,
+                            seats: seats
+                        }
+                    })
+                }
+            })
+        }
+        
+        return obj
+    })
+    res.send(seatsdateshourstheatersObj)
+    
+    await Seatsdateshourstheaters.deleteMany({})
+    const seatsdateshourstheaters = new Seatsdateshourstheaters({results: seatsdateshourstheatersObj})
+
+    try {
+        await seatsdateshourstheaters.save()
+        console.log('Successfully inserted')
+        res.sendStatus(200)
+    } catch (e) {
+        console.log('An error occurred while inserting into the Database: ' + e)
+        res.sendStatus(500)
     }
 }
 
@@ -370,6 +414,10 @@ const renewAndRemoveOldRecordsTableSeatsdateshours = async (req, res) => {
     )}
 }
 
+const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) => {
+
+}
+
 export {
     welcome,
     template,
@@ -380,7 +428,9 @@ export {
     postMessageContact,
     getTrailers,
     initTableSeatsdateshours,
+    initTableSeatsdateshourstheaters,
     renewAndRemoveOldRecordsTableSeatsdateshours,
+    renewAndRemoveOldRecordsTableSeatsdateshourstheaters,
     getSeatsdateshours,
     updateSeatsdateshours
 }

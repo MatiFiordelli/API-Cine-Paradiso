@@ -47,3 +47,7 @@ export const seatsdateshoursObjSchema = new mongoose.Schema({
 export const seatsdateshoursSchema = new mongoose.Schema({
     seatsdateshours: [seatsdateshoursObjSchema]
 })
+export const seatsdateshourstheatersSchema = new mongoose.Schema({results:[{
+    teather_movie_id: String,
+    seatsdateshours: [seatsdateshoursObjSchema]
+}]})
