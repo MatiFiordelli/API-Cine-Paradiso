@@ -324,6 +324,15 @@ const callInitTableSeatsdatehours = (req,res) => {
         })
 }
 
+const callInitTableSeatsdatehourstheaters = (req,res) => {
+    fetch('https://api-cine-paradiso.vercel.app/init-table-seatsdateshourstheaters')
+        .then(()=>res.sendStatus(200))
+        .catch((err)=>{
+            console.log(err)
+            res.sendStatus(500)
+        })
+}
+
 const renewAndRemoveOldRecordsTableSeatsdateshours = async (req, res) => {
     //obtengo tabla 
     const seatsdateshours = await Seatsdateshours.find({})
@@ -478,6 +487,144 @@ const renewAndRemoveOldRecordsTableSeatsdateshours = async (req, res) => {
 
 const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) => {
 
+
+    const update = async(seatsdateshourstheaters) => {
+        const seatsdateshourstheatersStringify = JSON.stringify(seatsdateshourstheaters)
+        const seatsdateshourstheatersCopy = JSON.parse(seatsdateshourstheatersStringify).seatsdateshours
+
+        const today = new Date().toLocaleDateString().split('/')
+        const currentDay = today[0]
+        const currentMonth = today[1]
+
+        //devuelve un objeto con dia, mes y año, a partir de un string del formato: '12/2', dia/mes
+        const obtainDayAndMonth = (str) => {
+            const splitted = str.split('/')
+            
+            return {
+                day: splitted[0],
+                month: splitted[1],
+                year: new Date().getFullYear()
+            }
+        }
+
+        const deleteObsoleteRecords = async(e) => {
+            console.log(e)
+            const date = obtainDayAndMonth(e.date)
+            
+            if(date.month*1>currentMonth*1) return e
+            if(date.month*1===currentMonth*1){
+                if(date.day*1>=currentDay*1) {
+                    return e
+                }
+            }
+        }
+        //borro registros obsoletos
+        const filteredRecordsByDate = Promise.all(
+            seatsdateshourstheatersCopy.filter(async(e)=>{
+                return await deleteObsoleteRecords(e)
+            })
+        )
+    
+        //si no hay nada para modificar
+        if(filteredRecordsByDate.length===7) {
+            res.sendStatus(200)
+            return
+        }
+        //si todas las fechas estan obsoletas, inicializa
+        if(filteredRecordsByDate.length===0) {
+            callInitTableSeatsdatehourstheaters(req, res)
+            console.log('Init by filteredRecordsByDate.length===0')
+            return
+        }else{
+
+            const getNextDay = (date, amountDays) => {
+                const result = new Date(date.setDate(date.getDate() + amountDays)).toLocaleDateString()
+                return result.slice(0,-5)
+            }
+            
+            //detecto cantidad de registros a insertar, en total deben ser 7
+            const amountRecordsLeft = filteredRecordsByDate.length
+            const amountRecordsToInsert = 7 - amountRecordsLeft 
+            
+            //obtengo la fecha del ultimo registro disponible, null si no quedo ninguno
+            let lastRecordDate = null
+            if(amountRecordsToInsert > 0){
+                const lastIndex = filteredRecordsByDate.length - 1
+                lastRecordDate = filteredRecordsByDate[lastIndex].date
+            }
+
+            //function genera array de fechas a partir de una fecha, ejemplo: 13/6
+            const generateDatesArray = (strDate, amount) => {
+                const todayStr = `${today[0]}/${today[1]}`
+                const objDate = obtainDayAndMonth(strDate===null ? todayStr : strDate)
+                const fromThisDateOnAhead = new Date(objDate.year, (objDate.month * 1)-1, objDate.day * 1)
+                const array = []
+                
+                for(let i=0; i<amount; i++){
+                    array.push(getNextDay(fromThisDateOnAhead ,1))
+                }
+                return array
+            }
+
+            //funcion para crear registro
+            const createRecords = async() => {
+                const theaters = (new Array(185)).fill(false)
+                const hoursFetched = await Hours.find({})
+                const hoursArray = extractHours(hoursFetched)
+                const datesArray = generateDatesArray(lastRecordDate , amountRecordsToInsert)
+
+                const obj = datesArray.map((e) => {
+                    return {
+                        date: e,
+                        schedules: hoursArray.map((e) => {
+                            return {
+                                hour: e,
+                                seats: theaters
+                            }
+                        })
+                    }
+                })
+                
+                return obj
+            }
+            
+            const result = await createRecords()
+            result.forEach((e)=>{
+                filteredRecordsByDate.push(e)
+            })
+            
+            seatsdateshourstheaters.seatsdateshours = filteredRecordsByDate 
+
+            return seatsdateshourstheaters            
+        }
+    }
+
+    //obtengo tabla 
+    const seatsdateshourstheaters = await Seatsdateshourstheaters.find({})
+
+    //si esta vacia, la inicializa
+    if(seatsdateshourstheaters.length === 0){
+        console.log('entro')
+        callInitTableSeatsdatehourstheaters(req, res)  
+        console.log('Init by seatsdateshourstheaters.length === 0')    
+        return
+    } else {
+        const updatedJSON = await Promise.all(seatsdateshourstheaters[0].results.map(async (e) => {
+            return await update(e)
+        }))
+
+        await Seatsdateshourstheaters.deleteMany({}) //results: seatsdateshourstheaters[0].results
+        const seatdateshourstheatersUpdated = new Seatsdateshourstheaters({ results: updatedJSON })
+
+        try {
+            await seatdateshourstheatersUpdated.save()
+            console.log('Successfully inserted')
+            res.sendStatus(200)
+        } catch (e) {
+            console.log('An error occurred while inserting into the Database: ' + e)
+            res.sendStatus(500)
+        }
+    }
 }
 
 export {
