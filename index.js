@@ -15,7 +15,9 @@ import {
     renewAndRemoveOldRecordsTableSeatsdateshours,
     renewAndRemoveOldRecordsTableSeatsdateshourstheaters,
     getSeatsdateshours,
-    updateSeatsdateshours
+    getSeatsdateshourstheaters,
+    updateSeatsdateshours,
+    updateSeatsdateshourstheaters
 } from "./Controllers/index.js"
 
 await connectMongoDB()
@@ -39,7 +41,9 @@ app.get('/init-table-seatsdateshourstheaters', (req, res) => template(req, res, 
 app.get('/renew-and-remove-old-records-table-seatsdateshours', (req, res) => template(req, res, renewAndRemoveOldRecordsTableSeatsdateshours))
 app.get('/renew-and-remove-old-records-table-seatsdateshourstheaters', (req, res) => template(req, res, renewAndRemoveOldRecordsTableSeatsdateshourstheaters))
 app.get('/get-seatsdateshours', (req, res) => template(req, res, getSeatsdateshours))
+app.get('/get-seatsdateshourstheaters', (req, res) => template(req, res, getSeatsdateshourstheaters))
 app.post('/update-seatsdateshours', (req, res) => template(req, res, updateSeatsdateshours))
+app.post('/update-seatsdateshourstheaters', (req, res) => template(req, res, updateSeatsdateshourstheaters))
 
 app.options('/', (req, res)=>{
     res.setHeader('Access-Control-Allow-Origin', '*')
