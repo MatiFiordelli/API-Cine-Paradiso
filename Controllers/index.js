@@ -524,7 +524,7 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
         })
 
         const filteredRecordsByDate = await filteredRecordsPromise
-
+console.log(filteredRecordsByDate)
         //si no hay nada para modificar
         if( filteredRecordsByDate.length===7) {
             return 'none'
@@ -611,7 +611,7 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
             }))
         })
         const updatedJSON = await Promise.all(await updatedJSONPromise)
-        console.log('res: ',updatedJSON)
+        
         //si todas las fechas estan obsoletas
         if(updatedJSON.includes(false)) {
             //callInitTableSeatsdatehourstheaters(req, res)
@@ -632,7 +632,7 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
                    seatsdateshourstheaters[0].results[i] = e
                 }
             })
-            console.log(updatedJSON)
+            //console.log(updatedJSON)
             res.send(updatedJSON)
             /* await Seatsdateshourstheaters.deleteMany({}) //results: seatsdateshourstheaters[0].results
             const seatdateshourstheatersUpdated = new Seatsdateshourstheaters({ results: seatsdateshourstheaters[0].results })
