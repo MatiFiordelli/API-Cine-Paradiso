@@ -613,7 +613,7 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
             console.log('There are at least a complete obsolete set of dates and they will be updated by Init')
             return
         } */
-
+console.log(updatedJSON)
         //si todos estan con sus fechas al dia, no se necesita actualizar, sino.. si
         const updatedJSON_Set = new Set(updatedJSON)
         if(updatedJSON_Set.has('none') && updatedJSON_Set.size===1){
