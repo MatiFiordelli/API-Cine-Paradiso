@@ -519,21 +519,21 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
         }
         //quito registros obsoletos
         const filteredRecordsPromise = new Promise((res, rej)=>{
-            seatsdateshourstheatersCopy.filter((e)=>detectObsoleteRecords(e))
-            setTimeout(()=>res(seatsdateshourstheatersCopy),2000)
+            const result = seatsdateshourstheatersCopy.filter((e)=>detectObsoleteRecords(e))
+            res(result),2000
         })
 
         const filteredRecordsByDate = await Promise.all(await filteredRecordsPromise)
-console.log(filteredRecordsByDate.length)
+
         //si no hay nada para modificar
-        if( filteredRecordsByDate.length===7) {
+        if(filteredRecordsByDate.length===7) {
             return 'none'
         }
         //si todas las fechas estan obsoletas, inicializa
         if(filteredRecordsByDate.length===0) {
             return false
         }else{
-
+console.log('asd')
             const getNextDay = (date, amountDays) => {
                 const result = new Date(date.setDate(date.getDate() + amountDays)).toLocaleDateString()
                 return result.slice(0,-5)
