@@ -610,7 +610,7 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
                 return await update(e)
             }))
         })
-        const updatedJSON = await updatedJSONPromise
+        const updatedJSON = await Promise.all(await updatedJSONPromise)
         
         //si todas las fechas estan obsoletas
         if(updatedJSON.includes(false)) {
@@ -632,8 +632,8 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
                    seatsdateshourstheaters[0].results[i] = e
                 }
             })
-            res.send(seatsdateshourstheaters)
-            console.log(seatsdateshourstheaters)
+            console.log(updatedJSON)
+            res.send(updatedJSON)
             /* await Seatsdateshourstheaters.deleteMany({}) //results: seatsdateshourstheaters[0].results
             const seatdateshourstheatersUpdated = new Seatsdateshourstheaters({ results: seatsdateshourstheaters[0].results })
 
