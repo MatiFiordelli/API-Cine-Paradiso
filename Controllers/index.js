@@ -181,14 +181,13 @@ const initTableSeatsdateshourstheaters = async (req, res) => {
         
         return obj
     })
-    res.send(seatsdateshourstheatersObj)
     
     await Seatsdateshourstheaters.deleteMany({})
     const seatsdateshourstheaters = new Seatsdateshourstheaters({results: seatsdateshourstheatersObj})
 
     try {
         await seatsdateshourstheaters.save()
-        console.log('Successfully inserted')
+        console.log('Successfully initializated')
         res.sendStatus(200)
     } catch (e) {
         console.log('An error occurred while inserting into the Database: ' + e)
