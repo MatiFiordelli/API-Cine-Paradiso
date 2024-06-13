@@ -598,11 +598,11 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
     const seatsdateshourstheaters = await Seatsdateshourstheaters.find({})
 
     //si esta vacia, la inicializa
-    if(seatsdateshourstheaters.length === 0){
+    /* if(seatsdateshourstheaters.length === 0){
         callInitTableSeatsdatehourstheaters(req, res)  
         console.log('Init by empty table, length=0')    
         return
-    } else {
+    } else { */
         const updatedJSON = await Promise.all(seatsdateshourstheaters[0].results.map(async (e) => {
             return await update(e)
         }))
@@ -640,7 +640,7 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
                 res.sendStatus(500)
             }
         } 
-    }
+    //}
 }
 
 export {
