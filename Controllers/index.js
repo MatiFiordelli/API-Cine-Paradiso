@@ -519,7 +519,7 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
         }
         //quito registros obsoletos
         const filteredRecordsPromise = new Promise((res, rej)=>{
-            const result = seatsdateshourstheatersCopy.filter(async(e)=>await detectObsoleteRecords(e))
+            const result = seatsdateshourstheatersCopy.filter(async(e)=>await detectObsoleteRecords(e)!==false)
             res(result)
         })
 
