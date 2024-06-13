@@ -611,7 +611,7 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
             }))
         })
         const updatedJSON = await Promise.all(await updatedJSONPromise)
-        
+        console.log('res: ',updatedJSON)
         //si todas las fechas estan obsoletas
         if(updatedJSON.includes(false)) {
             //callInitTableSeatsdatehourstheaters(req, res)
