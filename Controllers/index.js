@@ -519,12 +519,14 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
             }
         }
         //quito registros obsoletos
-        const filteredRecordsByDate = await Promise.all(
-            await seatsdateshourstheatersCopy.filter((e)=>detectObsoleteRecords(e))            
-        )
+        const filteredRecordsPromise = new Promise((res, rej)=>{
+            res(seatsdateshourstheatersCopy.filter((e)=>detectObsoleteRecords(e)))
+        })
+
+        const filteredRecordsByDate = await filteredRecordsPromise
 
         //si no hay nada para modificar
-        if(filteredRecordsByDate.length===7) {
+        if( filteredRecordsByDate.length===7) {
             return 'none'
         }
         //si todas las fechas estan obsoletas, inicializa
@@ -598,22 +600,22 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
     const seatsdateshourstheaters = await Seatsdateshourstheaters.find({})
 
     //si esta vacia, la inicializa
-    /* if(seatsdateshourstheaters.length === 0){
-        callInitTableSeatsdatehourstheaters(req, res)  
+    if(seatsdateshourstheaters.length === 0){
+        //callInitTableSeatsdatehourstheaters(req, res)  
         console.log('Init by empty table, length=0')    
         return
-    } else { */
+    } else {
         const updatedJSON = await Promise.all(seatsdateshourstheaters[0].results.map(async (e) => {
             return await update(e)
         }))
         
-        /* //si todas las fechas estan obsoletas
+        //si todas las fechas estan obsoletas
         if(updatedJSON.includes(false)) {
-            callInitTableSeatsdatehourstheaters(req, res)
+            //callInitTableSeatsdatehourstheaters(req, res)
             console.log('There are at least a complete obsolete set of dates and they will be updated by Init')
             return
-        } */
-console.log(updatedJSON)
+        }
+
         //si todos estan con sus fechas al dia, no se necesita actualizar, sino.. si
         const updatedJSON_Set = new Set(updatedJSON)
         if(updatedJSON_Set.has('none') && updatedJSON_Set.size===1){
@@ -627,8 +629,9 @@ console.log(updatedJSON)
                    seatsdateshourstheaters[0].results[i] = e
                 }
             })
-
-            await Seatsdateshourstheaters.deleteMany({}) //results: seatsdateshourstheaters[0].results
+            res.send(seatsdateshourstheaters)
+            console.log(seatsdateshourstheaters)
+            /* await Seatsdateshourstheaters.deleteMany({}) //results: seatsdateshourstheaters[0].results
             const seatdateshourstheatersUpdated = new Seatsdateshourstheaters({ results: seatsdateshourstheaters[0].results })
 
             try {
@@ -638,9 +641,9 @@ console.log(updatedJSON)
             } catch (e) {
                 console.log('An error occurred while inserting into the Database: ' + e)
                 res.sendStatus(500)
-            }
-        } 
-    //}
+            } */
+        }  
+    }
 }
 
 export {
