@@ -523,7 +523,7 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
             res(seatsdateshourstheatersCopy.filter((e)=>detectObsoleteRecords(e)))
         })
 
-        const filteredRecordsByDate = await filteredRecordsPromise
+        const filteredRecordsByDate = await Promise.all(await filteredRecordsPromise)
 console.log(filteredRecordsByDate)
         //si no hay nada para modificar
         if( filteredRecordsByDate.length===7) {
