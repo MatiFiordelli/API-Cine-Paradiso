@@ -605,14 +605,17 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
         console.log('Init by empty table, length=0')    
         return
     } else {
-        const updatedJSON = await Promise.all(seatsdateshourstheaters[0].results.map(async (e) => {
-            return await update(e)
-        }))
+        const updatedJSONPromise = new Promise((res, rej)=>{
+            res(seatsdateshourstheaters[0].results.map(async (e) => {
+                return await update(e)
+            }))
+        })
+        const updatedJSON = await updatedJSONPromise
         
         //si todas las fechas estan obsoletas
         if(updatedJSON.includes(false)) {
             //callInitTableSeatsdatehourstheaters(req, res)
-            console.log('There are at least a complete obsolete set of dates and they will be updated by Init')
+            console.log('There is at least a complete obsolete set of dates and they will be updated by Init')
             return
         }
 
