@@ -510,11 +510,6 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
 
         const detectObsoleteRecords = (e) => {
             const date =  obtainDayAndMonth(e.date)
-            console.log('date.month: ', Number(date.month))
-            console.log('currentMonth', Number(currentMonth))
-            console.log('date.day', Number(date.day))
-            console.log('currentday', Number(currentDay))
-            console.log('-----')
             if(Number(date.month)>Number(currentMonth)) return true
             if(Number(date.month)===Number(currentMonth)){
                 if(Number(date.day)>=Number(currentDay)) {
@@ -525,19 +520,17 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
             }else{
                 return false
             }
-            //return (date.month*1>currentMonth*1) || ((date.month*1===currentMonth*1) && (date.day*1>=currentDay*1))
         }
+
         //quito registros obsoletos
         const filteredRecordsPromise = seatsdateshourstheatersCopy.filter((e)=> {
             const r = detectObsoleteRecords(e)
-            //console.log(r)
             return r
         })
-            /* res(result)
-        }) */
+            
 
         const filteredRecordsByDate =  filteredRecordsPromise//)
-       // console.log(filteredRecordsByDate)
+       
         //si no hay nada para modificar
         if(filteredRecordsByDate.length===7) {
             return 'none'
