@@ -607,8 +607,8 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
 
     //si esta vacia, la inicializa
     if(seatsdateshourstheaters.length === 0){
-        //callInitTableSeatsdatehourstheaters(req, res)  
-        console.log('Init by empty table, length=0')    
+        callInitTableSeatsdatehourstheaters(req, res)  
+        console.log('Init by empty table, length=0 !')    
         return
     } else {
         const updatedJSONPromise = new Promise((res, rej)=>{
@@ -617,30 +617,29 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
             }))
         })
         const updatedJSON = await Promise.all(await updatedJSONPromise)
-        //console.log(updatedJSON)
+        
         //si todas las fechas estan obsoletas
         if(updatedJSON.includes(false)) {
-            //callInitTableSeatsdatehourstheaters(req, res)
-            console.log('There is at least a complete obsolete set of dates and they will be updated by Init')
+            callInitTableSeatsdatehourstheaters(req, res)
+            console.log('There is at least a complete obsolete set of dates and they will be updated by Init!')
             return
         }
 
         //si todos estan con sus fechas al dia, no se necesita actualizar, sino.. si
         const updatedJSON_Set = new Set(updatedJSON)
         if(updatedJSON_Set.has('none') && updatedJSON_Set.size===1){
-            console.log('No changes were made')
+            console.log('No changes were made!')
             res.sendStatus(200)
             return
         }else {
-            console.log('table updated')
+            console.log('Table updated successfully!')
             updatedJSON.forEach((e, i)=>{
                 if(e!=='none'){
                    seatsdateshourstheaters[0].results[i] = e
                 }
             })
-            //console.log(updatedJSON)
-            res.send(updatedJSON)
-            /* await Seatsdateshourstheaters.deleteMany({}) //results: seatsdateshourstheaters[0].results
+            
+            await Seatsdateshourstheaters.deleteMany({}) //results: seatsdateshourstheaters[0].results
             const seatdateshourstheatersUpdated = new Seatsdateshourstheaters({ results: seatsdateshourstheaters[0].results })
 
             try {
@@ -650,7 +649,7 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
             } catch (e) {
                 console.log('An error occurred while inserting into the Database: ' + e)
                 res.sendStatus(500)
-            } */
+            }
         }  
     }
 }
