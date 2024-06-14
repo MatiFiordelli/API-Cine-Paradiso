@@ -541,8 +541,11 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
         }else{
 
             const getNextDay = (date, amountDays) => {
-                const result = new Date(date.setDate(date.getDate() + amountDays)).toLocaleDateString()
-                return result.slice(0,-5)
+                const result = new Date(date.setDate(date.getDate() + amountDays)).toLocaleDateString("es-AR", {
+                    day: "numeric",
+                    month: "numeric"            
+                })
+                return result//.slice(0,-5)
             }
             
             //detecto cantidad de registros a insertar, en total deben ser 7
