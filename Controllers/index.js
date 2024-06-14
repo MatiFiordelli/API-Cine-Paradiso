@@ -521,7 +521,11 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
             //return (date.month*1>currentMonth*1) || ((date.month*1===currentMonth*1) && (date.day*1>=currentDay*1))
         }
         //quito registros obsoletos
-        const filteredRecordsPromise = seatsdateshourstheatersCopy.filter((e)=> detectObsoleteRecords(e))
+        const filteredRecordsPromise = seatsdateshourstheatersCopy.filter((e)=> {
+            const r = detectObsoleteRecords(e)
+            console.log(r)
+            return r
+        })
             /* res(result)
         }) */
 
