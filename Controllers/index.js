@@ -507,10 +507,10 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
 
         const detectObsoleteRecords = (e) => {
             const date =  obtainDayAndMonth(e.date)
-            console.log(Number(date.month))
-            console.log(Number(currentMonth))
-            console.log(Number(date.day))
-            console.log(Number(currentDay))
+            console.log('date.month: ', Number(date.month))
+            console.log('currentMonth', Number(currentMonth))
+            console.log('date.day', Number(date.day))
+            console.log('currentday', Number(currentDay))
             console.log('-----')
             if(Number(date.month)>Number(currentMonth)) return true
             if(Number(date.month)===Number(currentMonth)){
