@@ -496,8 +496,6 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
         }).split('/')
         const currentDay = today[0]
         const currentMonth = today[1]
-        console.log(currentDay)
-        console.log(currentMonth)
 
         //devuelve un objeto con dia, mes y año, a partir de un string del formato: '12/2', dia/mes
         const obtainDayAndMonth = (str) => {
@@ -512,11 +510,11 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
 
         const detectObsoleteRecords = (e) => {
             const date =  obtainDayAndMonth(e.date)
-            /* console.log('date.month: ', Number(date.month))
+            console.log('date.month: ', Number(date.month))
             console.log('currentMonth', Number(currentMonth))
             console.log('date.day', Number(date.day))
             console.log('currentday', Number(currentDay))
-            console.log('-----') */
+            console.log('-----')
             if(Number(date.month)>Number(currentMonth)) return true
             if(Number(date.month)===Number(currentMonth)){
                 if(Number(date.day)>=Number(currentDay)) {
