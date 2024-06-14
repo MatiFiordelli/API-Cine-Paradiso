@@ -526,7 +526,7 @@ const renewAndRemoveOldRecordsTableSeatsdateshourstheaters = async (req, res) =>
         }) */
 
         const filteredRecordsByDate =  filteredRecordsPromise//)
-        console.log(filteredRecordsByDate.length)
+        console.log(filteredRecordsByDate)
         //si no hay nada para modificar
         if(filteredRecordsByDate.length===7) {
             return 'none'
